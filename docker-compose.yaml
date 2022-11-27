@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  homework-db:
+    image: mysql:8
+    restart: always
+    volumes:
+      - db-config:/etc/mysql
+      - db-data:/var/lib/mysql
+      - ./sql_init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: "Yvdv217w"
+      MYSQL_DATABASE: homework-db
+    ports:
+      - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "2048MB"
+  app:
+    build:
+      context: .
+    image: homework-api
+    ports:
+      - "3001:3001"
+    depends_on:
+      - homework-db
+    stdin_open: true
+    tty: true
+volumes:
+  db-config:
+  db-data:
